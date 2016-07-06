@@ -2,12 +2,12 @@
 #include "SparseReconstruction.h"
 
 // for linux dirs
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
+//#include <unistd.h>
+//#include <sys/stat.h>
+//#include <sys/types.h>
+//#include <dirent.h>
 
-#include <fstream>
+//#include <fstream>
 
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Vector_3.h>
@@ -17,6 +17,8 @@
 #include <CGAL/ch_melkman.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/Dimension.h>
+
+#include "GL/glut.h"
 
 #define SOURCE_COST 10000
 #define SINK_COST   0.1
@@ -196,9 +198,6 @@ void SparseReconstruction::Triangulate(std::vector<MapPoint_KeyFrames*> &mp_kf)
             tri_id++;
         }
     }
-
-   ROS_INFO("Number of Triangles: %lu", surfaceTriangles.size());
-
 }
 
 void SparseReconstruction::copy(Vector<3> &v, Delaunay::Point &p)
@@ -463,11 +462,7 @@ SparseReconstruction::Delaunay::Cell_handle SparseReconstruction::FindCollisionF
         collidedCells.push_back(lastCell);
         collidedCells.push_back(cell);
         rstart = start;
-        rend = end;
-        ROS_INFO("res: %d\t%d\t%d\t%d", res[0], res[1], res[2], res[3]);
-        ROS_INFO("cks: %d\t%d\t%d\t%d", checks[0], checks[1], checks[2], checks[3]);
-        ROS_INFO("Something wrong with the sides of the cell!!!! last: %d cur: %d", lastCell->info().id, cell->info().id);
-
+        rend = end;        
     }
 
     return nextCell;
@@ -709,7 +704,6 @@ void SparseReconstruction::GenerateGraph()
             {
                 if(loopn++ > 1000)
                 {
-                    ROS_INFO("Too many repeats! .... ");
                     return;
                 }
 //                if(std::find(collidedCells.begin(),collidedCells.end(),curCell) == collidedCells.end())
@@ -721,7 +715,6 @@ void SparseReconstruction::GenerateGraph()
 //                    return;
 //                }
 
-                ROS_INFO_THROTTLE(1,"Graph generation..");
                 Delaunay::Cell_handle nextCell;
                 int nextId;
 
@@ -957,23 +950,23 @@ void SparseReconstruction::DrawCell(Delaunay::Cell_handle ch)
     }
 
 
-    CVD::glVertex(v[0]);
-    CVD::glVertex(v[1]);
-    CVD::glVertex(v[2]);
+    //CVD::glVertex(v[0]);
+    //CVD::glVertex(v[1]);
+    //CVD::glVertex(v[2]);
 
     if(n>3)
     {
-        CVD::glVertex(v[3]);
-        CVD::glVertex(v[1]);
-        CVD::glVertex(v[2]);
+//        CVD::glVertex(v[3]);
+//        CVD::glVertex(v[1]);
+//        CVD::glVertex(v[2]);
 
-        CVD::glVertex(v[0]);
-        CVD::glVertex(v[3]);
-        CVD::glVertex(v[2]);
+//        CVD::glVertex(v[0]);
+//        CVD::glVertex(v[3]);
+//        CVD::glVertex(v[2]);
 
-        CVD::glVertex(v[0]);
-        CVD::glVertex(v[1]);
-        CVD::glVertex(v[3]);
+//        CVD::glVertex(v[0]);
+//        CVD::glVertex(v[1]);
+//        CVD::glVertex(v[3]);
 
     }
 }
@@ -1030,12 +1023,12 @@ void SparseReconstruction::glDraw()
             copy(p[3],v[3]->point());
 
 
-            for(int i=0; i<4; i++)
-                for(int j=0; j<4; j++)
-                {
-                    CVD::glVertex(p[i]);
-                    CVD::glVertex(p[j]);
-                }
+//            for(int i=0; i<4; i++)
+//                for(int j=0; j<4; j++)
+//                {
+//                    CVD::glVertex(p[i]);
+//                    CVD::glVertex(p[j]);
+//                }
         }
 
 

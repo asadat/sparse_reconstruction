@@ -36,7 +36,11 @@ private:
         class MapPoint_KeyFrames
         {
         public:
+            // the 3D position of the map point
             Vector<3> p;
+
+            // the 3D position of the viewpoints that
+            // the map point was observed from
             std::vector<Vector<3> > keyframes_p;
         };
 

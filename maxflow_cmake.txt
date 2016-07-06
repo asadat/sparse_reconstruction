@@ -1,0 +1,3 @@
+add_library (maxflow block.h graph.h instances.inc graph.cpp maxflow.cpp)
+target_include_directories (maxflow PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+

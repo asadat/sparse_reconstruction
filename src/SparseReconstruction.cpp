@@ -18,6 +18,8 @@
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/Dimension.h>
 
+#include "graph.h"
+
 #include "GL/glut.h"
 
 #define SOURCE_COST 10000
@@ -25,6 +27,7 @@
 #define SMALLVALUE  0.00001
 #define SMALL_NUM   0.00000001
 #define VIS_SCORE_RAYS  1
+
 
 SparseReconstruction * SparseReconstruction::instance = NULL;
 
@@ -1311,7 +1314,7 @@ void SparseReconstruction::get_links_in_min_cut(int num_nodes, std::map< std::pa
     delete g;
 }
 
-SparseReconstruction::GraphType::node_id SparseReconstruction::add_node_if_necessary(int n, std::map<int, GraphType::node_id> &node_id_map, GraphType *g)
+int SparseReconstruction::add_node_if_necessary(int n, std::map<int, int> &node_id_map, GraphType *g)
 {
     GraphType::node_id  id;
     if ( node_id_map.find(n) != node_id_map.end() )

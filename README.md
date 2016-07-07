@@ -1,4 +1,4 @@
-A library to produce a consistent mesh from the generated point cloud of a key-frame based VIsual SLAM (or Structure-From-Motion).
+A library to produce a consistent mesh from the generated point cloud of a key-frame based Visual SLAM (or Structure-From-Motion).
 
 Required libraries:
 	- CGAL (www.cgal.org)

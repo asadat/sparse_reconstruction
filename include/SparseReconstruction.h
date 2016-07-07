@@ -11,7 +11,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
-#include "graph.h"
+//#include "graph.h"
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
@@ -19,6 +19,12 @@
 
 class Map;
 class MapPoint;
+
+template<typename A,typename B,typename C> class Graph;
+
+//this is the graph type used by the maxflow library
+typedef Graph<double,double,double> GraphType;
+//typedef GraphType::node_id GraphType_NodeID;
 
 using namespace TooN;
 
@@ -81,9 +87,6 @@ private:
         typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
 
         typedef Delaunay::Point   Point;
-
-        //this is the graph type used by the maxflow library
-        typedef Graph<double,double,double> GraphType;
 
 
         ~SparseReconstruction();
@@ -189,7 +192,7 @@ private:
                                                    std::vector< std::pair<int,int> > &neighbor_links,
                                                    std::vector< int > &source_links_in_min_cut,
                                                    std::vector< int > &sink_links_in_min_cut);
-        GraphType::node_id add_node_if_necessary(int n, std::map<int, GraphType::node_id> &node_id_map, GraphType *g);
+        int add_node_if_necessary(int n, std::map<int, int> &node_id_map, GraphType *g);
 
         typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
                 boost::property <boost::edge_weight_t, double,

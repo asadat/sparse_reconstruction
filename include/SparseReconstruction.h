@@ -11,7 +11,6 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
-//#include "graph.h"
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
@@ -24,7 +23,6 @@ template<typename A,typename B,typename C> class Graph;
 
 //this is the graph type used by the maxflow library
 typedef Graph<double,double,double> GraphType;
-//typedef GraphType::node_id GraphType_NodeID;
 
 using namespace TooN;
 
@@ -101,7 +99,10 @@ private:
         }
 
 
+#ifdef GL_VISUALIZATION
         void glDraw();
+#endif
+
         void Triangulate(std::vector<MapPoint_KeyFrames*> &mp_kf);
 
         void Reset();
@@ -124,17 +125,9 @@ private:
             Matrix<3,3> tri;
             std::vector<Delaunay::Vertex_handle> vertices;
             Delaunay::Vertex_handle outside_vh; //vertex not on this triangle, but on the cell in the OUTSIDE direction
-            bool too_big;
-            bool too_far;
-            bool occluded; //assessed by IsSurfaceTriangleValid
+
             bool unexplored;
             Vector<3> unit_normal_towards_outside;
-
-            //surface estimation fields
-            Vector<3> estimate_plane_norm;
-            Vector<3> estimate_plane_center;
-            double estimate_plane_density;
-            std::vector< Matrix<3,3> > neighbor_tris;
         };
 
         SparseReconstruction();
@@ -142,7 +135,10 @@ private:
 
         void GenerateGraph();
 
+#ifdef GL_VISUALIZATION
         void DrawCell(Delaunay::Cell_handle ch);
+#endif
+
         Delaunay::Cell_handle GetCameraCell(const Vector<3> start, const Vector<3> end, Vector<3> & cpoint);
 
         Delaunay::Cell_handle FindCollisionFromVertex(const Vector<3> start, const Vector<3> end, const Delaunay::Cell_handle & cell,

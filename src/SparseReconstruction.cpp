@@ -1,14 +1,6 @@
 
 #include "SparseReconstruction.h"
 
-// for linux dirs
-//#include <unistd.h>
-//#include <sys/stat.h>
-//#include <sys/types.h>
-//#include <dirent.h>
-
-//#include <fstream>
-
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_2.h>
@@ -20,7 +12,9 @@
 
 #include "graph.h"
 
+#ifdef GL_VISUALIZATION
 #include "GL/glut.h"
+#endif
 
 #define SOURCE_COST 10000
 #define SINK_COST   0.1
@@ -926,248 +920,6 @@ bool SparseReconstruction::GetCommonTriangle(const Delaunay::Cell_handle &cell1,
         return false;
 }
 
-void SparseReconstruction::DrawCell(Delaunay::Cell_handle ch)
-{
-    Vector<3> v[4];
-    int n=0;
-
-    if(delaunayMesh.is_infinite(ch))
-    {
-        return;
-        for(int i=0; i<4;i++)
-        {
-            if(!delaunayMesh.is_infinite(ch->vertex(i)))
-            {
-                n++;
-                copy(v[i], ch->vertex(i)->point());
-            }
-        }
-    }
-    else
-    {
-        for(int i=0; i<4;i++)
-        {
-            copy(v[i], ch->vertex(i)->point());
-        }
-        n = 4;
-    }
-
-
-    //CVD::glVertex(v[0]);
-    //CVD::glVertex(v[1]);
-    //CVD::glVertex(v[2]);
-
-    if(n>3)
-    {
-//        CVD::glVertex(v[3]);
-//        CVD::glVertex(v[1]);
-//        CVD::glVertex(v[2]);
-
-//        CVD::glVertex(v[0]);
-//        CVD::glVertex(v[3]);
-//        CVD::glVertex(v[2]);
-
-//        CVD::glVertex(v[0]);
-//        CVD::glVertex(v[1]);
-//        CVD::glVertex(v[3]);
-
-    }
-}
-
-
-void SparseReconstruction::glDraw()
-{
-    //ROS_INFO("check 1");
-
-    //load the textures
-//    for(int kf = 0; kf < map->vpKeyFrames.size(); kf++)
-//    {
-//        if(!map->vpKeyFrames[kf]->TextureLoaded)
-//        {
-//            //ROS_INFO("Loading Texture for KeyFrame#: %d", kf);
-//            map->vpKeyFrames[kf]->TextureLoaded = true;
-//            glEnable(GL_TEXTURE_2D);
-//            glGenTextures(1, &map->vpKeyFrames[kf]->mnFrameTex);
-//            glBindTexture(GL_TEXTURE_2D, map->vpKeyFrames[kf]->mnFrameTex);
-//            glTexImage2D(GL_TEXTURE_2D,
-//            0, GL_RGB,
-//                            map->vpKeyFrames[kf]->imColor.size().x, map->vpKeyFrames[kf]->imColor.size().y,
-//            0,GL_RGB,
-//            GL_UNSIGNED_BYTE,
-//            map->vpKeyFrames[kf]->imColor.data());
-//            glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_NEAREST);
-//            glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_NEAREST);
-//        }
-//    }
-
-
-    if(false)
-    {
-        Delaunay::Finite_cells_iterator cit = delaunayMesh.finite_cells_begin();
-
-        glLineWidth(1);
-
-        glBegin(GL_LINES);
-
-        for(;cit != delaunayMesh.finite_cells_end(); ++cit)
-        {
-            Delaunay::Vertex_handle v[4];
-
-            v[0] = cit->vertex(0);
-            v[1] = cit->vertex(1);
-            v[2] = cit->vertex(2);
-            v[3] = cit->vertex(3);
-
-            Vector<3> p[4];
-
-            copy(p[0],v[0]->point());
-            copy(p[1],v[1]->point());
-            copy(p[2],v[2]->point());
-            copy(p[3],v[3]->point());
-
-
-//            for(int i=0; i<4; i++)
-//                for(int j=0; j<4; j++)
-//                {
-//                    CVD::glVertex(p[i]);
-//                    CVD::glVertex(p[j]);
-//                }
-        }
-
-
-        glEnd();
-    }
-
-
-
-    if(/*ParamsAccess::varParams->DrawInsideCells*/false)
-    {
-        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
-        {
-
-            double c = ((double)(ii%255))/255.0;
-
-            glColor4f(1-c,c,1,1);
-            glLineWidth(2);
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            glBegin(GL_TRIANGLES);
-
-            if(surfaceTriangles[ii]->c2 != NULL)
-                DrawCell(surfaceTriangles[ii]->c2);
-
-            glEnd();
-        }
-
-    }
-
-    if(/*ParamsAccess::varParams->DrawSurfaceMesh*/true)
-    {
-
-        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
-        {
-            Matrix<3,3> tri = surfaceTriangles[ii]->tri;
-
-
-            glColor3f(1,1,1);
-            glLineWidth(3);
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glBegin(GL_TRIANGLES);
-            for(int i=0; i<3; i++)
-            {
-                glVertex3d(tri[i][0], tri[i][1], tri[i][2]);
-            }
-            glEnd();
-        }
-
-    }
-
-
-
-//    if(/*ParamsAccess::varParams->DrawTexturedMesh*/true)
-//    {
-//        glColor3f(0,1,0);
-//        glLineWidth(2);
-
-
-//        //glPolygonMode(GL_FRONT, GL_FILL);
-//        //glBegin(GL_LINES);
-//        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
-//        {
-//            Matrix<3,3> tri = surfaceTriangles[ii]->tri;
-
-//            int bestKeyframe = surfaceTriangles[ii]->KeyframeTex; //VisibilityServer::GetInstance()->GetBestKeyFrame(tri[0], tri[1], tri[2]);
-
-//            if(bestKeyframe>=0)
-//            {
-//                glEnable(GL_TEXTURE_2D);
-//                glBindTexture(GL_TEXTURE_2D, map->vpKeyFrames[bestKeyframe]->mnFrameTex);
-//            }
-
-//            glPolygonMode(GL_FRONT_AND_BACK , GL_FILL);
-
-//            glBegin(GL_TRIANGLES);
-
-//           // bool tx = TriangleNormalInCamera(map->vpKeyFrames[f[ff]]->se3CfromW, tri);
-//            for(int i=0; i<3; i++)
-//            {
-//                glColor3f(1, 1, 1);
-//                Vector<2> crd = surfaceTriangles[ii]->textureCord[i];//VisibilityServer::GetInstance()->GetImageCoord(tri[i], bestKeyframe);
-//              //  if(tx)
-//                {
-//                    if (/*ParamsAccess::varParams->DrawTriangleValidityTrace*/false){
-//                        continue;
-//                        /* Here is the colour key:
-//                         *      yellow triangles: too_far
-//                         *      red triangles: too_big && !too_far
-//                         *      green triangles: too_big && validated_by_angle && !too_far
-//                         */
-//                        if (surfaceTriangles[ii]->too_far)
-//                        {
-//                            glColor3f(0.8, 0.8, 0); //draw yellow triangle if it's too far
-//                        }
-//                        else
-//                        {
-//                            if ( surfaceTriangles[ii]->occluded )
-//                            {
-//                                //back facing => blue
-//                                glColor3f(0, 0, 1);
-//                            }
-//                            else if ( surfaceTriangles[ii]->too_big )
-//                            {
-//                                //big & not validated => red
-//                                glColor3f(1, 0, 0);
-//                            }
-//                            else
-//                            {
-//                                //not too big, not occluded and not too far => just draw the texture
-//                                glTexCoord2f(crd[0], crd[1]);
-//                            }
-//                        }
-
-//                    }
-//                    else
-//                    {
-//                        if(surfaceTriangles[ii]->unexplored || bestKeyframe<0)
-//                            glColor3f(0.5,0.5,0.5);
-//                        else
-//                            glTexCoord2f(crd[0], crd[1]);
-//                    }
-//                    glVertex3d(tri[i][0], tri[i][1], tri[i][2]);
-//                }
-//            }
-//            glEnd();
-//            glDisable(GL_TEXTURE_2D);
-
-
-//        }
-
-//    }
-
-}
-
-
 void SparseReconstruction::get_links_in_min_cut(int num_nodes, std::map< std::pair<int,int>, double > linksToCosts,
                                            std::map<int, std::pair<double,double> > terminal_costs,
                                            std::vector< std::pair<int,int> > &neighbor_links,
@@ -1691,3 +1443,229 @@ SparseReconstruction::VertexInfo::VertexInfo()
 //    xmlf.close();
 //    return true;
 //}
+
+
+#ifdef GL_VISUALIZATION
+
+void SparseReconstruction::DrawCell(Delaunay::Cell_handle ch)
+{
+    Vector<3> v[4];
+    int n=0;
+
+    if(delaunayMesh.is_infinite(ch))
+    {
+        return;
+        for(int i=0; i<4;i++)
+        {
+            if(!delaunayMesh.is_infinite(ch->vertex(i)))
+            {
+                n++;
+                copy(v[i], ch->vertex(i)->point());
+            }
+        }
+    }
+    else
+    {
+        for(int i=0; i<4;i++)
+        {
+            copy(v[i], ch->vertex(i)->point());
+        }
+        n = 4;
+    }
+
+}
+
+
+void SparseReconstruction::glDraw()
+{
+    //ROS_INFO("check 1");
+
+    //load the textures
+//    for(int kf = 0; kf < map->vpKeyFrames.size(); kf++)
+//    {
+//        if(!map->vpKeyFrames[kf]->TextureLoaded)
+//        {
+//            //ROS_INFO("Loading Texture for KeyFrame#: %d", kf);
+//            map->vpKeyFrames[kf]->TextureLoaded = true;
+//            glEnable(GL_TEXTURE_2D);
+//            glGenTextures(1, &map->vpKeyFrames[kf]->mnFrameTex);
+//            glBindTexture(GL_TEXTURE_2D, map->vpKeyFrames[kf]->mnFrameTex);
+//            glTexImage2D(GL_TEXTURE_2D,
+//            0, GL_RGB,
+//                            map->vpKeyFrames[kf]->imColor.size().x, map->vpKeyFrames[kf]->imColor.size().y,
+//            0,GL_RGB,
+//            GL_UNSIGNED_BYTE,
+//            map->vpKeyFrames[kf]->imColor.data());
+//            glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_NEAREST);
+//            glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_NEAREST);
+//        }
+//    }
+
+
+    if(false)
+    {
+        Delaunay::Finite_cells_iterator cit = delaunayMesh.finite_cells_begin();
+
+        glLineWidth(1);
+
+        glBegin(GL_LINES);
+
+        for(;cit != delaunayMesh.finite_cells_end(); ++cit)
+        {
+            Delaunay::Vertex_handle v[4];
+
+            v[0] = cit->vertex(0);
+            v[1] = cit->vertex(1);
+            v[2] = cit->vertex(2);
+            v[3] = cit->vertex(3);
+
+            Vector<3> p[4];
+
+            copy(p[0],v[0]->point());
+            copy(p[1],v[1]->point());
+            copy(p[2],v[2]->point());
+            copy(p[3],v[3]->point());
+
+
+//            for(int i=0; i<4; i++)
+//                for(int j=0; j<4; j++)
+//                {
+//                    CVD::glVertex(p[i]);
+//                    CVD::glVertex(p[j]);
+//                }
+        }
+
+
+        glEnd();
+    }
+
+
+
+    if(/*ParamsAccess::varParams->DrawInsideCells*/false)
+    {
+        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
+        {
+
+            double c = ((double)(ii%255))/255.0;
+
+            glColor4f(1-c,c,1,1);
+            glLineWidth(2);
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glBegin(GL_TRIANGLES);
+
+            if(surfaceTriangles[ii]->c2 != NULL)
+                DrawCell(surfaceTriangles[ii]->c2);
+
+            glEnd();
+        }
+
+    }
+
+    if(/*ParamsAccess::varParams->DrawSurfaceMesh*/true)
+    {
+
+        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
+        {
+            Matrix<3,3> tri = surfaceTriangles[ii]->tri;
+
+
+            glColor3f(1,1,1);
+            glLineWidth(3);
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glBegin(GL_TRIANGLES);
+            for(int i=0; i<3; i++)
+            {
+                glVertex3d(tri[i][0], tri[i][1], tri[i][2]);
+            }
+            glEnd();
+        }
+
+    }
+
+
+
+//    if(/*ParamsAccess::varParams->DrawTexturedMesh*/true)
+//    {
+//        glColor3f(0,1,0);
+//        glLineWidth(2);
+
+
+//        //glPolygonMode(GL_FRONT, GL_FILL);
+//        //glBegin(GL_LINES);
+//        for(unsigned int ii=0; ii<surfaceTriangles.size(); ii++)
+//        {
+//            Matrix<3,3> tri = surfaceTriangles[ii]->tri;
+
+//            int bestKeyframe = surfaceTriangles[ii]->KeyframeTex; //VisibilityServer::GetInstance()->GetBestKeyFrame(tri[0], tri[1], tri[2]);
+
+//            if(bestKeyframe>=0)
+//            {
+//                glEnable(GL_TEXTURE_2D);
+//                glBindTexture(GL_TEXTURE_2D, map->vpKeyFrames[bestKeyframe]->mnFrameTex);
+//            }
+
+//            glPolygonMode(GL_FRONT_AND_BACK , GL_FILL);
+
+//            glBegin(GL_TRIANGLES);
+
+//           // bool tx = TriangleNormalInCamera(map->vpKeyFrames[f[ff]]->se3CfromW, tri);
+//            for(int i=0; i<3; i++)
+//            {
+//                glColor3f(1, 1, 1);
+//                Vector<2> crd = surfaceTriangles[ii]->textureCord[i];//VisibilityServer::GetInstance()->GetImageCoord(tri[i], bestKeyframe);
+//              //  if(tx)
+//                {
+//                    if (/*ParamsAccess::varParams->DrawTriangleValidityTrace*/false){
+//                        continue;
+//                        /* Here is the colour key:
+//                         *      yellow triangles: too_far
+//                         *      red triangles: too_big && !too_far
+//                         *      green triangles: too_big && validated_by_angle && !too_far
+//                         */
+//                        if (surfaceTriangles[ii]->too_far)
+//                        {
+//                            glColor3f(0.8, 0.8, 0); //draw yellow triangle if it's too far
+//                        }
+//                        else
+//                        {
+//                            if ( surfaceTriangles[ii]->occluded )
+//                            {
+//                                //back facing => blue
+//                                glColor3f(0, 0, 1);
+//                            }
+//                            else if ( surfaceTriangles[ii]->too_big )
+//                            {
+//                                //big & not validated => red
+//                                glColor3f(1, 0, 0);
+//                            }
+//                            else
+//                            {
+//                                //not too big, not occluded and not too far => just draw the texture
+//                                glTexCoord2f(crd[0], crd[1]);
+//                            }
+//                        }
+
+//                    }
+//                    else
+//                    {
+//                        if(surfaceTriangles[ii]->unexplored || bestKeyframe<0)
+//                            glColor3f(0.5,0.5,0.5);
+//                        else
+//                            glTexCoord2f(crd[0], crd[1]);
+//                    }
+//                    glVertex3d(tri[i][0], tri[i][1], tri[i][2]);
+//                }
+//            }
+//            glEnd();
+//            glDisable(GL_TEXTURE_2D);
+
+
+//        }
+
+//    }
+
+}
+
+#endif

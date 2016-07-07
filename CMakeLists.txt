@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(sparse_reconstruction)
 
-#ADD_SUBDIRECTORY (maxflow)
+ADD_DEFINITIONS(-DGL_VISUALIZATION)
 
 ADD_LIBRARY( sparse_reconstruction SHARED
        maxflow/maxflow 
@@ -18,6 +18,8 @@ include_directories(
   include
   maxflow
 ) 
+
+
 
 SET(GCC_CGAL_COMPILE_FLAGS "-frounding-math")
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CGAL_COMPILE_FLAGS} -Wno-write-strings -o3" )

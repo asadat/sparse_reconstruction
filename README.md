@@ -7,3 +7,6 @@ Required libraries:
 	- boost
 	- maxflow solver (run install_maxflow_lib.sh to install this library)
 
+
+Comment/uncomment the following line in CMakeLists.txt to disable/enable the methods for mesh visualization:
+set(VISUALIZATION ON)

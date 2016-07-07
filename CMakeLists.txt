@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(sparse_reconstruction)
 
-ADD_DEFINITIONS(-DGL_VISUALIZATION)
+set(VISUALIZATION ON)
 
-ADD_LIBRARY( sparse_reconstruction SHARED
+
+add_library( sparse_reconstruction SHARED
        maxflow/maxflow 
        maxflow/block.h 
        maxflow/graph.h 
@@ -21,11 +22,16 @@ include_directories(
 
 
 
-SET(GCC_CGAL_COMPILE_FLAGS "-frounding-math")
-SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CGAL_COMPILE_FLAGS} -Wno-write-strings -o3" )
+set(GCC_CGAL_COMPILE_FLAGS "-frounding-math")
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CGAL_COMPILE_FLAGS} -Wno-write-strings -o3" )
 
 
-set(SPARSE_RECONSTRUCTION_LIBRARIES GL glut gmp CGAL CGAL_Core)
+set(SPARSE_RECONSTRUCTION_LIBRARIES gmp CGAL CGAL_Core)
+
+if(VISUALIZATION)
+  add_definitions(-DGL_VISUALIZATION)
+  set(GL_LIBS GL glut)
+endif()
 
 set_target_properties(sparse_reconstruction
     PROPERTIES
@@ -34,5 +40,5 @@ set_target_properties(sparse_reconstruction
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
 )
 
-TARGET_LINK_LIBRARIES(sparse_reconstruction ${SPARSE_RECONSTRUCTION_LIBRARIES})
+target_link_libraries(sparse_reconstruction ${SPARSE_RECONSTRUCTION_LIBRARIES} ${GL_LIBS})
 

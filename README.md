@@ -10,3 +10,8 @@ Required libraries:
 
 Comment/uncomment the following line in CMakeLists.txt to disable/enable the methods for mesh visualization:
 set(VISUALIZATION ON)
+
+
+Method:
+We use a simplified version of the approach introduced in the following paper (only the visibility constraints are used in the optimization):
+Vu, Hoang-Hiep, et al. "High accuracy and visibility-consistent dense multiview stereo." IEEE transactions on pattern analysis and machine intelligence 34.5 (2012): 889-901.

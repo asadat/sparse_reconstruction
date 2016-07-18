@@ -3,6 +3,7 @@ sparse_reconstruction
 
 ## Descritopn
 A library to produce a consistent mesh from the generated point cloud of a key-frame based Visual SLAM (or Structure-From-Motion).
+(example reconstruction: https://github.com/asadat/sparse_reconstruction/wiki )
 
 ## dependencies
 Required libraries:
